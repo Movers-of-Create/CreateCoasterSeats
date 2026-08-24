@@ -44,12 +44,14 @@ public final class SecurableSeatBlockEntity extends SmartBlockEntity {
         return powered;
     }
 
+    public static final int MAX_ANGLE = 65;
+
     @Override
     public void tick() {
         super.tick();
 
         previousHangerAngle = hangerAngle;
-        float targetAngle = getBlockState().getValue(SecurableSeatBlock.POWERED) ? 0 : 65;
+        float targetAngle = getBlockState().getValue(SecurableSeatBlock.POWERED) ? 0 : MAX_ANGLE;
         hangerAngle = Mth.approach(hangerAngle, targetAngle, 9);
     }
 
@@ -70,6 +72,10 @@ public final class SecurableSeatBlockEntity extends SmartBlockEntity {
                 level.setBlock(worldPosition, state.setValue(SecurableSeatBlock.POWERED, powered), Block.UPDATE_ALL);
             sendData();
         }
+    }
+
+    public boolean isHangerDown(float partialTicks) {
+        return getHangerAngle(partialTicks) <= 0;
     }
 
     private static final class FrequencySlot extends ValueBoxTransform.Dual {

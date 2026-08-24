@@ -2,6 +2,7 @@ package net.villagerzock.createcoasterseats.registry;
 
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.villagerzock.createcoasterseats.Createcoasterseats;
@@ -21,7 +22,16 @@ public final class ModBlocks {
         for (DyeColor color : DyeColor.values()) {
             seats.put(color, BLOCKS.register(
                 color.getName() + "_securable_seat",
-                () -> new SecurableSeatBlock(BlockBehaviour.Properties.of().strength(1.0F), color)
+                () -> new SecurableSeatBlock(BlockBehaviour.Properties.of().strength(1.0F), color, ((entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, partialTicks, playerModelBundle, pos, level) -> {
+                    playerModelBundle.rightArm().xRot = (float) Math.toRadians(-60);
+                    playerModelBundle.rightArm().z += 2f;
+                    playerModelBundle.rightArm().yRot = 0;
+                    playerModelBundle.rightArm().zRot = (float) Math.toRadians(20);
+                    playerModelBundle.leftArm().xRot = (float) Math.toRadians(-60);
+                    playerModelBundle.leftArm().z += 2f;
+                    playerModelBundle.leftArm().yRot = 0;
+                    playerModelBundle.leftArm().zRot = (float) Math.toRadians(-20);
+                }))
             ));
         }
         SECURABLE_SEATS = Collections.unmodifiableMap(seats);

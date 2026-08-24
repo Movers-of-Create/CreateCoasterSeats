@@ -4,8 +4,11 @@
   "package": "net.villagerzock.createcoasterseats.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "SeatEntityMixin"
   ],
   "client": [
+    "ItemInHandRendererMixin",
+    "PlayerModelMixin"
   ],
   "injectors": {
     "defaultRequire": 1

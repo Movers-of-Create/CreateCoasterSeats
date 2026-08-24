@@ -3,7 +3,10 @@ package net.villagerzock.createcoasterseats.block;
 import com.simibubi.create.content.contraptions.actors.seat.SeatBlock;
 import com.simibubi.create.content.redstone.link.LinkBehaviour;
 import com.simibubi.create.foundation.utility.BlockHelper;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -24,18 +27,21 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.villagerzock.createcoasterseats.block.entity.SecurableSeatBlockEntity;
 import net.villagerzock.createcoasterseats.registry.ModBlockEntities;
 import net.villagerzock.createcoasterseats.registry.ModBlocks;
 import net.villagerzock.createcoasterseats.event.SeatMountHandler;
 import org.jetbrains.annotations.Nullable;
 
-public class SecurableSeatBlock extends SeatBlock implements EntityBlock, ISecurableSeat {
+public class SecurableSeatBlock extends SeatBlock implements EntityBlock, ISecurableSeat, IPlayerAnimationModificator {
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    private final IPlayerAnimationModificator playerAnimationModificator;
 
-    public SecurableSeatBlock(Properties properties, DyeColor color) {
+    public SecurableSeatBlock(Properties properties, DyeColor color, IPlayerAnimationModificator playerAnimationModificator) {
         super(properties, color);
+        this.playerAnimationModificator = playerAnimationModificator;
         registerDefaultState(defaultBlockState()
                 .setValue(POWERED, false)
                 .setValue(FACING, net.minecraft.core.Direction.NORTH));
@@ -113,5 +119,20 @@ public class SecurableSeatBlock extends SeatBlock implements EntityBlock, ISecur
     @Override
     public boolean isSecured(BlockState state, BlockPos pos, Level level) {
         return state.getValue(POWERED);
+    }
+
+    @Override
+    public void updatePlayerAnimation(AbstractClientPlayer entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float partialTicks, PlayerModelBundle playerModelBundle, BlockPos pos, Level level) {
+        this.playerAnimationModificator.updatePlayerAnimation(entity,limbSwing,limbSwingAmount, ageInTicks, netHeadYaw, headPitch, partialTicks, playerModelBundle, pos, level);
+    }
+
+    public int getRotation(BlockState state) {
+        Direction direction = state.getValue(FACING);
+        return switch (direction){
+            case WEST -> 1;
+            case NORTH -> 2;
+            case EAST -> 3;
+            default -> 0;
+        };
     }
 }
