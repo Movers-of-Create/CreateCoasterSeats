@@ -1,5 +1,5 @@
 {
-  "itemGroup.createcoasterseats": "Create Coaster Seats",
+  "itemGroup.createcoasterseats": "Create Achterbahn Sitze",
   "block.createcoasterseats.white_securable_seat": "Weißer sicherbarer Sitz",
   "block.createcoasterseats.orange_securable_seat": "Oranger sicherbarer Sitz",
   "block.createcoasterseats.magenta_securable_seat": "Magenta sicherbarer Sitz",
@@ -18,5 +18,9 @@
   "block.createcoasterseats.black_securable_seat": "Schwarzer sicherbarer Sitz",
   "message.createcoasterseats.seat_locked_exit": "Du kannst gerade nicht aussteigen. Der Sitz ist gesperrt.",
   "message.createcoasterseats.seat_locked_enter": "Du kannst dich gerade nicht hinsetzen. Der Sitz ist gesperrt.",
-  "tooltip.createcoasterseats.securable_seat.description": "Stelle die Sperrfrequenz an der Unterseite des Sitzes ein."
+  "tooltip.createcoasterseats.securable_seat.description": "Stelle die Sperrfrequenz an der Unterseite des Sitzes ein.",
+  "createcoasterseats.seats.activation_method": "Aktivierungs Methode",
+  "createcoasterseats.securable_seat.activation_mode.link_only": "Nur Link",
+  "createcoasterseats.securable_seat.activation_mode.link_and_redstone": "Link & Redstone",
+  "createcoasterseats.securable_seat.activation_mode.redstone_only": "Nur Redstone"
 }

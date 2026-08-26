@@ -18,5 +18,9 @@
   "block.createcoasterseats.black_securable_seat": "Black Securable Seat",
   "message.createcoasterseats.seat_locked_exit": "You can't exit right now. The seat is locked.",
   "message.createcoasterseats.seat_locked_enter": "You can't sit down right now. The seat is locked.",
-  "tooltip.createcoasterseats.securable_seat.description": "Set the locking frequency on the bottom of the seat."
+  "tooltip.createcoasterseats.securable_seat.description": "Set the locking frequency on the bottom of the seat.",
+  "createcoasterseats.seats.activation_method": "Activation Method",
+  "createcoasterseats.securable_seat.activation_mode.link_only": "Link Only",
+  "createcoasterseats.securable_seat.activation_mode.link_and_redstone": "Link & Redstone",
+  "createcoasterseats.securable_seat.activation_mode.redstone_only": "Redstone Only"
 }

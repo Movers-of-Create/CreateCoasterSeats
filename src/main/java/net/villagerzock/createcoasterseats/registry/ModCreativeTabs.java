@@ -7,6 +7,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import net.villagerzock.createcoasterseats.CreateCoasterSeatsConfig;
 import net.villagerzock.createcoasterseats.Createcoasterseats;
 
 public final class ModCreativeTabs {
@@ -26,9 +27,17 @@ public final class ModCreativeTabs {
             .build()
     );
 
-    private static ItemStack getAnimatedIcon() {
+    public static ItemStack getAnimatedIcon() {
         int colorIndex = (int) ((System.currentTimeMillis() / ICON_INTERVAL_MILLIS) % COLORS.length);
         return ModItems.SECURABLE_SEATS.get(COLORS[colorIndex]).get().getDefaultInstance();
+    }
+
+    public static DyeColor getAnimatedTint(){
+        if (!CreateCoasterSeatsConfig.ENABLE_CREATIVE_TAB_ANIMATION.get()){
+            return DyeColor.GRAY;
+        }
+        int colorIndex = (int) ((System.currentTimeMillis() / ICON_INTERVAL_MILLIS) % COLORS.length);
+        return COLORS[colorIndex];
     }
 
     private ModCreativeTabs() {

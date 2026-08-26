@@ -2,11 +2,21 @@ package net.villagerzock.createcoasterseats.block.entity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import com.simibubi.create.content.kinetics.mechanicalArm.ArmBlock;
 import com.simibubi.create.content.redstone.link.LinkBehaviour;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
+import com.simibubi.create.foundation.blockEntity.behaviour.CenteredSideValueBoxTransform;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
+import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.INamedIconOptions;
+import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollOptionBehaviour;
+import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollValueBehaviour;
+import com.simibubi.create.foundation.gui.AllIcons;
+import com.simibubi.create.foundation.utility.CreateLang;
+import net.createmod.catnip.lang.Lang;
+import net.createmod.catnip.math.AngleHelper;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
@@ -15,14 +25,41 @@ import net.minecraft.world.phys.Vec3;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.core.Direction;
 import net.villagerzock.createcoasterseats.block.SecurableSeatBlock;
+import net.villagerzock.createcoasterseats.icons.SeatsAllIcons;
 import net.villagerzock.createcoasterseats.registry.ModBlockEntities;
 
 import java.util.List;
 
-public final class SecurableSeatBlockEntity extends SmartBlockEntity {
+public class SecurableSeatBlockEntity extends SmartBlockEntity {
     private boolean powered;
     private float previousHangerAngle;
     private float hangerAngle;
+
+    public enum ActivationMode implements INamedIconOptions {
+        LINK_ONLY(SeatsAllIcons.I_SEAT_LINK_ONLY),
+        LINK_AND_REDSTONE(SeatsAllIcons.I_SEAT_LINK_AND_REDSTONE),
+        REDSTONE_ONLY(SeatsAllIcons.I_SEAT_REDSTONE_ONLY)
+        ;
+
+        private final String translationKey;
+        private final AllIcons icon;
+        ActivationMode(AllIcons icon){
+            this.icon = icon;
+            this.translationKey = "createcoasterseats.securable_seat.activation_mode." + Lang.asId(name());
+        }
+
+        @Override
+        public AllIcons getIcon() {
+            return icon;
+        }
+
+        @Override
+        public String getTranslationKey() {
+            return translationKey;
+        }
+    }
+
+    protected ScrollOptionBehaviour<ActivationMode> activationMode;
 
     public SecurableSeatBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.SECURABLE_SEAT.get(), pos, state);
@@ -38,6 +75,12 @@ public final class SecurableSeatBlockEntity extends SmartBlockEntity {
             ValueBoxTransform.Dual.makeSlots(FrequencySlot::new),
             strength -> setPowered(strength > 0)
         ));
+
+        activationMode = new ScrollOptionBehaviour<>(ActivationMode.class,
+                Component.translatable("createcoasterseats.seats.activation_method"), this, new SelectionModeValueBox());
+        activationMode.requiresWrench();
+        behaviours.add(activationMode);
+
     }
 
     public boolean isPowered() {
@@ -106,5 +149,26 @@ public final class SecurableSeatBlockEntity extends SmartBlockEntity {
                 default -> 0;
             };
         }
+    }
+    private class SelectionModeValueBox extends CenteredSideValueBoxTransform {
+
+        public SelectionModeValueBox() {
+            super((blockState, direction) -> !direction.getAxis()
+                    .isVertical());
+        }
+
+        @Override
+        public Vec3 getLocalOffset(LevelAccessor level, BlockPos pos, BlockState state) {
+            int yPos = 3;
+            Vec3 location = VecHelper.voxelSpace(8, yPos, 15.5);
+            location = VecHelper.rotateCentered(location, AngleHelper.horizontalAngle(getSide()), Direction.Axis.Y);
+            return location;
+        }
+
+        @Override
+        public float getScale() {
+            return super.getScale();
+        }
+
     }
 }
