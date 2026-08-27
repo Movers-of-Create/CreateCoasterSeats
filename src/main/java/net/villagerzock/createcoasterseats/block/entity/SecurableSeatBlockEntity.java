@@ -2,7 +2,6 @@ package net.villagerzock.createcoasterseats.block.entity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import com.simibubi.create.content.kinetics.mechanicalArm.ArmBlock;
 import com.simibubi.create.content.redstone.link.LinkBehaviour;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
@@ -10,9 +9,7 @@ import com.simibubi.create.foundation.blockEntity.behaviour.CenteredSideValueBox
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
 import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.INamedIconOptions;
 import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollOptionBehaviour;
-import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollValueBehaviour;
 import com.simibubi.create.foundation.gui.AllIcons;
-import com.simibubi.create.foundation.utility.CreateLang;
 import net.createmod.catnip.lang.Lang;
 import net.createmod.catnip.math.AngleHelper;
 import net.minecraft.core.BlockPos;
@@ -31,9 +28,14 @@ import net.villagerzock.createcoasterseats.registry.ModBlockEntities;
 import java.util.List;
 
 public class SecurableSeatBlockEntity extends SmartBlockEntity {
-    private boolean powered;
+    private boolean linkPowered;
+    private boolean redstonePowered;
     private float previousHangerAngle;
     private float hangerAngle;
+
+    public ActivationMode getActivationMode() {
+        return activationMode.get();
+    }
 
     public enum ActivationMode implements INamedIconOptions {
         LINK_ONLY(SeatsAllIcons.I_SEAT_LINK_ONLY),
@@ -63,8 +65,8 @@ public class SecurableSeatBlockEntity extends SmartBlockEntity {
 
     public SecurableSeatBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.SECURABLE_SEAT.get(), pos, state);
-        powered = state.getValue(SecurableSeatBlock.POWERED);
-        hangerAngle = powered ? 0 : 90;
+        linkPowered = state.getValue(SecurableSeatBlock.POWERED);
+        hangerAngle = linkPowered ? 0 : 90;
         previousHangerAngle = hangerAngle;
     }
 
@@ -73,18 +75,25 @@ public class SecurableSeatBlockEntity extends SmartBlockEntity {
         behaviours.add(LinkBehaviour.receiver(
             this,
             ValueBoxTransform.Dual.makeSlots(FrequencySlot::new),
-            strength -> setPowered(strength > 0)
+            strength -> setLinkPowered(strength > 0)
         ));
 
         activationMode = new ScrollOptionBehaviour<>(ActivationMode.class,
                 Component.translatable("createcoasterseats.seats.activation_method"), this, new SelectionModeValueBox());
-        activationMode.requiresWrench();
+        activationMode.requiresWrench()
+                .withCallback(activationMode -> {
+                    updateState();
+                });
         behaviours.add(activationMode);
 
     }
 
-    public boolean isPowered() {
-        return powered;
+    public boolean isLinkPowered() {
+        return linkPowered;
+    }
+
+    public boolean isRedstonePowered() {
+        return redstonePowered;
     }
 
     public static final int MAX_ANGLE = 65;
@@ -102,17 +111,39 @@ public class SecurableSeatBlockEntity extends SmartBlockEntity {
         return Mth.lerp(partialTicks, previousHangerAngle, hangerAngle);
     }
 
-    public void setPowered(boolean powered) {
-        BlockState state = getBlockState();
-        if (this.powered == powered && state.getValue(SecurableSeatBlock.POWERED) == powered)
+    public void setLinkPowered(boolean linkPowered) {
+        if (this.linkPowered == linkPowered)
             return;
 
-        this.powered = powered;
+        this.linkPowered = linkPowered;
+        updateState();
+    }
+
+    public void setRedstonePowered(boolean redstonePowered) {
+        if (this.redstonePowered == redstonePowered)
+            return;
+
+        this.redstonePowered = redstonePowered;
+        updateState();
+    }
+
+    public boolean isPowered(){
+        return switch (activationMode.get()) {
+            case LINK_AND_REDSTONE -> linkPowered || redstonePowered;
+            case REDSTONE_ONLY -> redstonePowered;
+            case LINK_ONLY -> linkPowered;
+        };
+    }
+
+    public void updateState(){
+        BlockState state = getBlockState();
+        if (state.getValue(SecurableSeatBlock.POWERED) == isPowered())
+            return;
         setChanged();
 
         if (level != null && !level.isClientSide) {
-            if (state.getValue(SecurableSeatBlock.POWERED) != powered)
-                level.setBlock(worldPosition, state.setValue(SecurableSeatBlock.POWERED, powered), Block.UPDATE_ALL);
+            if (state.getValue(SecurableSeatBlock.POWERED) != isPowered())
+                level.setBlock(worldPosition, state.setValue(SecurableSeatBlock.POWERED, isPowered()), Block.UPDATE_ALL);
             sendData();
         }
     }

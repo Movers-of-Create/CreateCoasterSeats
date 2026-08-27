@@ -31,7 +31,12 @@ public class PlayerModelMixin<T extends LivingEntity> extends HumanoidModel<T> {
         }
         float partialTicks = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(true);
         if (entity.getVehicle() instanceof SeatEntity seat && seat.level().getBlockState(seat.blockPosition()).getBlock() instanceof SecurableSeatBlock securableSeatBlock && seat.level().getBlockEntity(seat.blockPosition()) instanceof SecurableSeatBlockEntity securableSeatBlockEntity && securableSeatBlockEntity.isHangerDown(partialTicks)){
-            securableSeatBlock.updatePlayerAnimation(player, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, partialTicks, new PlayerModelBundle(this.head, this.body, this.rightArm, this.leftArm, this.rightLeg, this.leftLeg), seat.blockPosition(), seat.level());
+            securableSeatBlock.updatePlayerAnimation(player, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, partialTicks, new PlayerModelBundle(this.head, this.body, this.rightArm, this.leftArm, this.rightLeg, this.leftLeg), seat.blockPosition(), seat.level(),Minecraft.getInstance().options.getCameraType().isFirstPerson());
+            if (Minecraft.getInstance().options.getCameraType().isFirstPerson()){
+                this.head.visible = false;
+                this.hat.visible = false;
+            }
+
         }
     }
 }

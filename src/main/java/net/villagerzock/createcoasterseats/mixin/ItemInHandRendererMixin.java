@@ -1,11 +1,17 @@
 package net.villagerzock.createcoasterseats.mixin;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.content.contraptions.actors.seat.SeatEntity;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.PlayerModel;
+import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.player.PlayerRenderer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.villagerzock.createcoasterseats.block.PlayerModelBundle;
 import net.villagerzock.createcoasterseats.block.SecurableSeatBlock;
 import net.villagerzock.createcoasterseats.block.entity.SecurableSeatBlockEntity;

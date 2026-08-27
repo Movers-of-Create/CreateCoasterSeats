@@ -22,7 +22,7 @@ public final class ModBlocks {
         for (DyeColor color : DyeColor.values()) {
             seats.put(color, BLOCKS.register(
                 color.getName() + "_securable_seat",
-                () -> new SecurableSeatBlock(BlockBehaviour.Properties.of().strength(1.0F), color, ((entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, partialTicks, playerModelBundle, pos, level) -> {
+                () -> new SecurableSeatBlock(BlockBehaviour.Properties.of().strength(1.0F), color, ((entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, partialTicks, playerModelBundle, pos, level, isFpv) -> {
                     playerModelBundle.rightArm().xRot = (float) Math.toRadians(-60);
                     playerModelBundle.rightArm().z += 2f;
                     playerModelBundle.rightArm().yRot = 0;
@@ -31,6 +31,12 @@ public final class ModBlocks {
                     playerModelBundle.leftArm().z += 2f;
                     playerModelBundle.leftArm().yRot = 0;
                     playerModelBundle.leftArm().zRot = (float) Math.toRadians(-20);
+
+                    if (isFpv){
+                        playerModelBundle.body().visible = false;
+                        playerModelBundle.leftLeg().visible = false;
+                        playerModelBundle.rightLeg().visible = false;
+                    }
                 }))
             ));
         }

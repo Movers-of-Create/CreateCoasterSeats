@@ -9,6 +9,7 @@
   "client": [
     "CreativeModeInventoryScreenMixin",
     "ItemInHandRendererMixin",
+    "LevelRendererMixin",
     "PlayerModelMixin"
   ],
   "injectors": {

@@ -22,20 +22,21 @@ public class SeatsAllIcons extends AllIcons {
     public static final ResourceLocation ICON_ATLAS = ResourceLocation.fromNamespaceAndPath(Createcoasterseats.MOD_ID,"textures/gui/icons.png");
     public static final int ICON_ATLAS_SIZE = 32;
 
-    public static SeatsAllIcons
-            I_SEAT_LINK_ONLY = next(),
-            I_SEAT_LINK_AND_REDSTONE = next(),
-            I_SEAT_REDSTONE_ONLY = newRow();
 
     private int iconX;
     private int iconY;
 
     private static int x = 0, y = -1;
 
+    public static SeatsAllIcons
+            I_SEAT_LINK_ONLY = newRow(),
+            I_SEAT_LINK_AND_REDSTONE = next(),
+            I_SEAT_REDSTONE_ONLY = newRow();
+
     public SeatsAllIcons(int x, int y) {
         super(x, y);
-        this.iconX = x;
-        this.iconY = y;
+        this.iconX = x * 16;
+        this.iconY = y * 16;
     }
 
     private static SeatsAllIcons next() {
@@ -54,7 +55,7 @@ public class SeatsAllIcons extends AllIcons {
     @OnlyIn(Dist.CLIENT)
     @Override
     public void render(GuiGraphics graphics, int x, int y) {
-        graphics.blit(ICON_ATLAS, x, y, 0, iconX, iconY, 16, 16, 256, 256);
+        graphics.blit(ICON_ATLAS, x, y, 0, iconX, iconY, 16, 16, ICON_ATLAS_SIZE, ICON_ATLAS_SIZE);
     }
 
     @OnlyIn(Dist.CLIENT)
