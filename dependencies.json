@@ -1,0 +1,16 @@
+{
+  "dependencies": [
+    {
+      "name": "create",
+      "type": "required",
+      "modrinth": "P7dR8mSH",
+      "version": "6.0.10"
+    },
+    {
+      "name": "create-coasters-simulated",
+      "type": "optional",
+      "modrinth": "W1ZUfWdr",
+      "version": "*"
+    }
+  ]
+}
