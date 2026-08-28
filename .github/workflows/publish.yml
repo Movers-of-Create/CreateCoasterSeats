@@ -1,0 +1,119 @@
+name: Build and Publish
+
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Make Gradle executable
+        run: chmod +x ./gradlew
+
+      - name: Build
+        run: ./gradlew build
+
+      - name: Read version
+        id: version
+        shell: bash
+        run: |
+          BASE_VERSION=$(grep '^mod_version=' gradle.properties | cut -d'=' -f2)
+
+          VERSION="${BASE_VERSION}+build.${GITHUB_RUN_NUMBER}"
+
+          echo "base=$BASE_VERSION" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Generate changelog
+        shell: bash
+        run: |
+          LAST_TAG=$(git describe \
+            --tags \
+            --match "release-*" \
+            --abbrev=0 \
+            2>/dev/null || true)
+
+          if [ -n "$LAST_TAG" ]; then
+            git log "${LAST_TAG}..HEAD" \
+              --no-merges \
+              --pretty=format:"- %s ([%h](https://github.com/${GITHUB_REPOSITORY}/commit/%H))" \
+              > CHANGELOG.md
+          else
+            git log \
+              --no-merges \
+              --pretty=format:"- %s ([%h](https://github.com/${GITHUB_REPOSITORY}/commit/%H))" \
+              > CHANGELOG.md
+          fi
+
+          echo "Generated changelog:"
+          cat CHANGELOG.md
+
+      - name: Read dependencies
+        id: dependencies
+        shell: bash
+        run: |
+          {
+            echo "value<<EOF"
+
+            jq -r '
+              .dependencies[]
+              | "\(.name)(\(.type)){modrinth:\(.modrinth)}"
+            ' dependencies.json
+
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Publish to Modrinth
+        uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          modrinth-id: ${{ vars.MODRINTH_ID }}
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+
+          files: |
+            build/libs/!(*-@(sources|javadoc|dev)).jar
+
+          name: ${{ steps.version.outputs.version }}
+          version: ${{ steps.version.outputs.version }}
+          version-type: release
+
+          changelog-file: CHANGELOG.md
+
+          loaders: |
+            neoforge
+
+          game-versions: |
+            1.21.1
+
+          dependencies: ${{ steps.dependencies.outputs.value }}
+
+      - name: Create release tag
+        shell: bash
+        run: |
+          TAG="release-${{ steps.version.outputs.version }}"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git tag "$TAG"
+          git push origin "$TAG"
