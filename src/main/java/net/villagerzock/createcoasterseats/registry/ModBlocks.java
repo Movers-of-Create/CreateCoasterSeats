@@ -15,6 +15,7 @@ import java.util.Map;
 public final class ModBlocks {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(Createcoasterseats.MOD_ID);
     public static final Map<DyeColor, DeferredBlock<SecurableSeatBlock>> SECURABLE_SEATS;
+    public static final Map<DyeColor, DeferredBlock<SecurableSeatBlock>> LAPBAR_SEATS;
     public static final DeferredBlock<SecurableSeatBlock> BLACK_SECURABLE_SEAT;
 
     static {
@@ -41,6 +42,31 @@ public final class ModBlocks {
             ));
         }
         SECURABLE_SEATS = Collections.unmodifiableMap(seats);
+
+        Map<DyeColor, DeferredBlock<SecurableSeatBlock>> lapbarSeats = new EnumMap<>(DyeColor.class);
+        for (DyeColor color : DyeColor.values()) {
+            lapbarSeats.put(color, BLOCKS.register(
+                    color.getName() + "_lapbar_seat",
+                    () -> new SecurableSeatBlock(BlockBehaviour.Properties.of().strength(1.0F), color, ((entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, partialTicks, playerModelBundle, pos, level, isFpv) -> {
+                        playerModelBundle.rightArm().xRot = (float) Math.toRadians(-60);
+                        playerModelBundle.rightArm().z += 2f;
+                        playerModelBundle.rightArm().yRot = 0;
+                        playerModelBundle.rightArm().zRot = (float) Math.toRadians(20);
+                        playerModelBundle.leftArm().xRot = (float) Math.toRadians(-60);
+                        playerModelBundle.leftArm().z += 2f;
+                        playerModelBundle.leftArm().yRot = 0;
+                        playerModelBundle.leftArm().zRot = (float) Math.toRadians(-20);
+
+                        if (isFpv){
+                            playerModelBundle.body().visible = false;
+                            playerModelBundle.leftLeg().visible = false;
+                            playerModelBundle.rightLeg().visible = false;
+                        }
+                    }))
+            ));
+        }
+        LAPBAR_SEATS = Collections.unmodifiableMap(lapbarSeats);
+
         BLACK_SECURABLE_SEAT = SECURABLE_SEATS.get(DyeColor.BLACK);
     }
 

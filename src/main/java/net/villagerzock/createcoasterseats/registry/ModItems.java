@@ -14,6 +14,7 @@ import java.util.Map;
 public final class ModItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Createcoasterseats.MOD_ID);
     public static final Map<DyeColor, DeferredItem<BlockItem>> SECURABLE_SEATS;
+    public static final Map<DyeColor, DeferredItem<BlockItem>> LAPBAR_SEATS;
     public static final DeferredItem<BlockItem> BLACK_SECURABLE_SEAT;
 
     static {
@@ -22,7 +23,13 @@ public final class ModItems {
             color.getName() + "_securable_seat",
             () -> new BlockItem(block.get(), new Item.Properties())
         )));
+        Map<DyeColor, DeferredItem<BlockItem>> lapbarSeats = new EnumMap<>(DyeColor.class);
+        ModBlocks.LAPBAR_SEATS.forEach((color, block) -> lapbarSeats.put(color, ITEMS.register(
+                color.getName() + "_lapbar_seat",
+                () -> new BlockItem(block.get(), new Item.Properties())
+        )));
         SECURABLE_SEATS = Collections.unmodifiableMap(seats);
+        LAPBAR_SEATS = Collections.unmodifiableMap(lapbarSeats);
         BLACK_SECURABLE_SEAT = SECURABLE_SEATS.get(DyeColor.BLACK);
     }
 
