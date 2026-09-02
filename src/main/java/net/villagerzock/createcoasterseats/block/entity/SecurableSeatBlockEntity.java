@@ -164,7 +164,7 @@ public class SecurableSeatBlockEntity extends SmartBlockEntity {
     }
 
     public boolean isHangerDown(float partialTicks) {
-        return getHangerAngle(partialTicks) <= 0;
+        return Math.abs(getHangerAngle(partialTicks) - minAngle) < 0.1;
     }
 
     private static final class FrequencySlot extends ValueBoxTransform.Dual {

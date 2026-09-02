@@ -64,7 +64,6 @@ public class PlayerModelMixin<T extends LivingEntity> extends HumanoidModel<T> {
                 this.head.visible = false;
                 this.hat.visible = false;
             }
-
         }
     }
 }

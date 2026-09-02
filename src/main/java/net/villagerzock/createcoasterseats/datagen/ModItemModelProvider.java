@@ -148,6 +148,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         );
 
         JsonObject result = seatJson.deepCopy();
+        result.addProperty("parent", "minecraft:block/block");
 
         JsonArray resultElements = getOrCreateElements(result);
 

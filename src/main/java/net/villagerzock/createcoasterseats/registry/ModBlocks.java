@@ -53,18 +53,16 @@ public final class ModBlocks {
                         playerModelBundle.rightArm().xRot = (float) Math.toRadians(-60);
                         playerModelBundle.rightArm().z += 2f;
                         playerModelBundle.rightArm().yRot = 0;
-                        playerModelBundle.rightArm().zRot = (float) Math.toRadians(20);
                         playerModelBundle.leftArm().xRot = (float) Math.toRadians(-60);
                         playerModelBundle.leftArm().z += 2f;
                         playerModelBundle.leftArm().yRot = 0;
-                        playerModelBundle.leftArm().zRot = (float) Math.toRadians(-20);
 
                         if (isFpv){
                             playerModelBundle.body().visible = false;
                             playerModelBundle.leftLeg().visible = false;
                             playerModelBundle.rightLeg().visible = false;
                         }
-                    }), 0, 65, new Vec3(0, 0, 14 / 16D), ResourceLocation.fromNamespaceAndPath(Createcoasterseats.MOD_ID, "restrictor/lapbar"))
+                    }), 10, -20, new Vec3(0, 0, 18 / 16D), ResourceLocation.fromNamespaceAndPath(Createcoasterseats.MOD_ID, "restrictor/lapbar"))
             ));
         }
         LAPBAR_SEATS = Collections.unmodifiableMap(lapbarSeats);
