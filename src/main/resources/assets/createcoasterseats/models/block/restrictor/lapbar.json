@@ -1,9 +1,9 @@
 {
 	"format_version": "1.9.0",
 	"credit": "Made with Blockbench",
+	"parent": "minecraft:block/block",
 	"textures": {
-		"40": "girder",
-		"particle": "createcoasterseats:sidelow_on"
+		"40": "create:block/girder"
 	},
 	"elements": [
 		{

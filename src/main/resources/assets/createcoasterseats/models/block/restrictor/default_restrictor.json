@@ -1,6 +1,7 @@
 {
 	"format_version": "1.21.6",
 	"credit": "Made with Blockbench",
+	"parent": "minecraft:block/block",
 	"texture_size": [64, 64],
 	"textures": {
 		"39": "createcoasterseats:block/secured_seat/securable_seat_holder",

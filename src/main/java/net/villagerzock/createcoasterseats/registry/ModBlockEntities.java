@@ -19,7 +19,7 @@ public final class ModBlockEntities {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SecurableSeatBlockEntity>> SECURABLE_SEAT =
         BLOCK_ENTITIES.register("securable_seat", () -> {
-            List<DeferredBlock<SecurableSeatBlock>> seatBlocks = new ArrayList<>(ModBlocks.SECURABLE_SEATS.values());
+            List<DeferredBlock<SecurableSeatBlock>> seatBlocks = new ArrayList<>(ModBlocks.RESTRICTOR_SEATS.values());
             seatBlocks.addAll(ModBlocks.LAPBAR_SEATS.values());
             return BlockEntityType.Builder.of(
                             SecurableSeatBlockEntity::new,

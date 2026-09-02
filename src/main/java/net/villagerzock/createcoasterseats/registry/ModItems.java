@@ -1,5 +1,6 @@
 package net.villagerzock.createcoasterseats.registry;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
@@ -19,10 +20,13 @@ public final class ModItems {
 
     static {
         Map<DyeColor, DeferredItem<BlockItem>> seats = new EnumMap<>(DyeColor.class);
-        ModBlocks.SECURABLE_SEATS.forEach((color, block) -> seats.put(color, ITEMS.register(
-            color.getName() + "_securable_seat",
-            () -> new BlockItem(block.get(), new Item.Properties())
-        )));
+        ModBlocks.RESTRICTOR_SEATS.forEach((color, block) -> {
+            ITEMS.addAlias(ResourceLocation.fromNamespaceAndPath(Createcoasterseats.MOD_ID,color.getName()+"_securable_seat"), ResourceLocation.fromNamespaceAndPath(Createcoasterseats.MOD_ID, color.getName() + "_restrictor_seat"));
+            seats.put(color, ITEMS.register(
+                    color.getName() + "_restrictor_seat",
+                    () -> new BlockItem(block.get(), new Item.Properties())
+            ));
+        });
         Map<DyeColor, DeferredItem<BlockItem>> lapbarSeats = new EnumMap<>(DyeColor.class);
         ModBlocks.LAPBAR_SEATS.forEach((color, block) -> lapbarSeats.put(color, ITEMS.register(
                 color.getName() + "_lapbar_seat",
