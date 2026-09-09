@@ -8,9 +8,9 @@
   ],
   "client": [
     "CreativeModeInventoryScreenMixin",
-    "HumanoidArmorLayerMixin",
     "ItemInHandRendererMixin",
     "LevelRendererMixin",
+    "LivingEntityRendererMixin",
     "PlayerModelMixin"
   ],
   "injectors": {
