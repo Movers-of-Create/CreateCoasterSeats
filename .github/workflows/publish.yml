@@ -31,7 +31,8 @@ jobs:
 
       - name: Make Gradle executable
         run: chmod +x ./gradlew
-
+      - name: DataGen
+        run: ./gradlew runData
       - name: Build
         run: ./gradlew build
 
