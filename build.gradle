@@ -42,6 +42,18 @@ neoForge {
             client()
         }
 
+        data {
+            data()
+
+            programArguments.addAll(
+                    '--mod', project.mod_id,
+                    '--all',
+                    '--output', file('src/generated/resources/').getAbsolutePath(),
+                    '--existing', file('src/main/resources/').getAbsolutePath(),
+                    "--existing-mod", "create"
+            )
+        }
+
         server {
             server()
             programArgument '--nogui'
@@ -86,3 +98,5 @@ def generateModMetadata = tasks.register('generateModMetadata', ProcessResources
 
 sourceSets.main.resources.srcDir generateModMetadata
 neoForge.ideSyncTask generateModMetadata
+
+sourceSets.main.resources.srcDir 'src/generated/resources'

@@ -22,8 +22,10 @@ public final class ModCreativeTabs {
         () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.createcoasterseats"))
             .icon(ModCreativeTabs::getAnimatedIcon)
-            .displayItems((parameters, output) ->
-                ModItems.SECURABLE_SEATS.values().forEach(item -> output.accept(item.get())))
+            .displayItems((parameters, output) ->{
+                ModItems.SECURABLE_SEATS.values().forEach(item -> output.accept(item.get()));
+                ModItems.LAPBAR_SEATS.values().forEach(item -> output.accept(item.get()));
+            })
             .build()
     );
 

@@ -1,8 +1,0 @@
-{
-  "parent": "createcoasterseats:block/black_securable_seat",
-  "textures": {
-    "15": "create:block/seat/top_light_gray",
-    "30": "create:block/seat/side_light_gray",
-    "particle": "create:block/seat/side_light_gray"
-  }
-}

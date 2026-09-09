@@ -16,10 +16,6 @@ import net.minecraft.core.Direction;
 import org.jetbrains.annotations.NotNull;
 
 public final class SecurableSeatRenderer extends SmartBlockEntityRenderer<SecurableSeatBlockEntity> {
-    private static final PartialModel HANGER = PartialModel.of(ResourceLocation.fromNamespaceAndPath(
-        Createcoasterseats.MOD_ID,
-        "block/securable_seat_hanger"
-    ));
 
     public SecurableSeatRenderer(BlockEntityRendererProvider.Context context) {
         super(context);
@@ -39,11 +35,11 @@ public final class SecurableSeatRenderer extends SmartBlockEntityRenderer<Secura
             default -> 0;
         };
 
-        CachedBuffers.partial(HANGER, blockEntity.getBlockState())
+        CachedBuffers.partial(blockEntity.getRestrictorModel(), blockEntity.getBlockState())
             .center()
             .rotateYDegrees(horizontalRotation)
             .uncenter()
-            .translate(0, 20 / 16D, -2 / 16D)
+            .translate(blockEntity.getRestrictorOffset())
             .rotateXDegrees(-blockEntity.getHangerAngle(partialTicks))
             .light(light)
             .renderInto(poseStack, buffer.getBuffer(RenderType.cutoutMipped()));

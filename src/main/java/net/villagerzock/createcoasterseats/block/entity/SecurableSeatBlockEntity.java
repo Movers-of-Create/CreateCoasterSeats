@@ -10,6 +10,7 @@ import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
 import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.INamedIconOptions;
 import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollOptionBehaviour;
 import com.simibubi.create.foundation.gui.AllIcons;
+import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.createmod.catnip.lang.Lang;
 import net.createmod.catnip.math.AngleHelper;
 import net.minecraft.core.BlockPos;
@@ -21,6 +22,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.core.Direction;
+import net.neoforged.fml.ISystemReportExtender;
+import net.villagerzock.createcoasterseats.block.ISecurableSeat;
 import net.villagerzock.createcoasterseats.block.SecurableSeatBlock;
 import net.villagerzock.createcoasterseats.icons.SeatsAllIcons;
 import net.villagerzock.createcoasterseats.registry.ModBlockEntities;
@@ -35,6 +38,13 @@ public class SecurableSeatBlockEntity extends SmartBlockEntity {
 
     public ActivationMode getActivationMode() {
         return activationMode.get();
+    }
+
+    public PartialModel getRestrictorModel() {
+        if (getBlockState().getBlock() instanceof ISecurableSeat securableSeat) {
+            return securableSeat.getRestrictorModel();
+        }
+        return null;
     }
 
     public enum ActivationMode implements INamedIconOptions {
@@ -65,9 +75,15 @@ public class SecurableSeatBlockEntity extends SmartBlockEntity {
 
     public SecurableSeatBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.SECURABLE_SEAT.get(), pos, state);
+
+        maxAngle = state.getBlock() instanceof ISecurableSeat securableSeat ? securableSeat.getMaxAngle() : 0;
+        minAngle = state.getBlock() instanceof ISecurableSeat securableSeat ? securableSeat.getMinAngle() : 0;
+
         linkPowered = state.getValue(SecurableSeatBlock.POWERED);
-        hangerAngle = linkPowered ? 0 : 90;
+        redstonePowered = state.getValue(SecurableSeatBlock.POWERED);
+        hangerAngle = linkPowered ? minAngle : maxAngle;
         previousHangerAngle = hangerAngle;
+
     }
 
     @Override
@@ -96,14 +112,15 @@ public class SecurableSeatBlockEntity extends SmartBlockEntity {
         return redstonePowered;
     }
 
-    public static final int MAX_ANGLE = 65;
+    public final int maxAngle;
+    public final int minAngle;
 
     @Override
     public void tick() {
         super.tick();
 
         previousHangerAngle = hangerAngle;
-        float targetAngle = getBlockState().getValue(SecurableSeatBlock.POWERED) ? 0 : MAX_ANGLE;
+        float targetAngle = getBlockState().getValue(SecurableSeatBlock.POWERED) ? minAngle : maxAngle;
         hangerAngle = Mth.approach(hangerAngle, targetAngle, 9);
     }
 
@@ -141,15 +158,17 @@ public class SecurableSeatBlockEntity extends SmartBlockEntity {
             return;
         setChanged();
 
-        if (level != null && !level.isClientSide) {
+        if (level != null) {
             if (state.getValue(SecurableSeatBlock.POWERED) != isPowered())
                 level.setBlock(worldPosition, state.setValue(SecurableSeatBlock.POWERED, isPowered()), Block.UPDATE_ALL);
-            sendData();
+            System.out.println("Updated State");
+            if (!level.isClientSide)
+                sendData();
         }
     }
 
     public boolean isHangerDown(float partialTicks) {
-        return getHangerAngle(partialTicks) <= 0;
+        return Math.abs(getHangerAngle(partialTicks) - minAngle) < 0.1;
     }
 
     private static final class FrequencySlot extends ValueBoxTransform.Dual {
@@ -181,6 +200,14 @@ public class SecurableSeatBlockEntity extends SmartBlockEntity {
             };
         }
     }
+
+    public Vec3 getRestrictorOffset(){
+        if (getBlockState().getBlock() instanceof ISecurableSeat securableSeat){
+            return securableSeat.getRestrictorOffset();
+        }
+        return Vec3.ZERO;
+    }
+
     private class SelectionModeValueBox extends CenteredSideValueBoxTransform {
 
         public SelectionModeValueBox() {

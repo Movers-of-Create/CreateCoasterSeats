@@ -3,10 +3,11 @@ package net.villagerzock.createcoasterseats.block;
 import com.simibubi.create.content.contraptions.actors.seat.SeatBlock;
 import com.simibubi.create.content.redstone.link.LinkBehaviour;
 import com.simibubi.create.foundation.utility.BlockHelper;
+import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -16,7 +17,6 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -41,9 +41,18 @@ public class SecurableSeatBlock extends SeatBlock implements EntityBlock, ISecur
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     private final IPlayerAnimationModificator playerAnimationModificator;
 
-    public SecurableSeatBlock(Properties properties, DyeColor color, IPlayerAnimationModificator playerAnimationModificator) {
+    private final int minAngle;
+    private final int maxAngle;
+    private final Vec3 restrictorOffset;
+    private final PartialModel restrictorModel;
+
+    public SecurableSeatBlock(Properties properties, DyeColor color, IPlayerAnimationModificator playerAnimationModificator, int minAngle, int maxAngle, Vec3 restrictorOffset, ResourceLocation restrictorModel) {
         super(properties, color);
         this.playerAnimationModificator = playerAnimationModificator;
+        this.minAngle = minAngle;
+        this.maxAngle = maxAngle;
+        this.restrictorOffset = restrictorOffset;
+        this.restrictorModel = PartialModel.of(restrictorModel.withPrefix("block/"));
         registerDefaultState(defaultBlockState()
                 .setValue(POWERED, false)
                 .setValue(FACING, net.minecraft.core.Direction.NORTH));
@@ -87,7 +96,7 @@ public class SecurableSeatBlock extends SeatBlock implements EntityBlock, ISecur
             if (!level.isClientSide) {
                 BlockState recolored = BlockHelper.copyProperties(
                     state,
-                    ModBlocks.SECURABLE_SEATS.get(newColor).get().defaultBlockState()
+                    ModBlocks.RESTRICTOR_SEATS.get(newColor).get().defaultBlockState()
                 );
                 level.setBlockAndUpdate(pos, recolored);
             }
@@ -143,6 +152,26 @@ public class SecurableSeatBlock extends SeatBlock implements EntityBlock, ISecur
     @Override
     public boolean isSecured(BlockState state, BlockPos pos, Level level) {
         return state.getValue(POWERED);
+    }
+
+    @Override
+    public int getMaxAngle() {
+        return maxAngle;
+    }
+
+    @Override
+    public int getMinAngle() {
+        return minAngle;
+    }
+
+    @Override
+    public Vec3 getRestrictorOffset() {
+        return restrictorOffset;
+    }
+
+    @Override
+    public PartialModel getRestrictorModel() {
+        return restrictorModel;
     }
 
     @Override
