@@ -6,10 +6,7 @@ import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.vehicle.Minecart;
-import net.neoforged.fml.common.Mod;
 import net.villagerzock.createcoasterseats.block.PlayerModelBundle;
 import net.villagerzock.createcoasterseats.block.SecurableSeatBlock;
 import net.villagerzock.createcoasterseats.block.entity.SecurableSeatBlockEntity;
@@ -46,7 +43,7 @@ public class PlayerModelMixin<T extends LivingEntity> extends HumanoidModel<T> {
         super(root);
     }
 
-    @Inject(method = "setupAnim(Lnet/minecraft/world/entity/LivingEntity;FFFFF)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/model/HumanoidModel;setupAnim(Lnet/minecraft/world/entity/LivingEntity;FFFFF)V", shift = At.Shift.AFTER))
+    @Inject(method = "setupAnim(Lnet/minecraft/world/entity/LivingEntity;FFFFF)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/model/HumanoidModel;setupAnim(Lnet/minecraft/world/entity/LivingEntity;FFFFF)V", shift = At.Shift.AFTER), cancellable = true)
     private void createcoasterseats$changeHandAnimation(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, CallbackInfo ci){
         if (!(entity instanceof AbstractClientPlayer player)){
             return;

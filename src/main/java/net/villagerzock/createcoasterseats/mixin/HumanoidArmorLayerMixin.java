@@ -18,7 +18,7 @@ public class HumanoidArmorLayerMixin {
 
     @Inject(method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/entity/LivingEntity;FFFFFF)V", cancellable = true, at = @At("HEAD"))
     private <T extends LivingEntity> void createcoasterseats$render(PoseStack poseStack, MultiBufferSource buffer, int packedLight, T livingEntity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, CallbackInfo ci){
-        if (livingEntity != Minecraft.getInstance().cameraEntity && Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
+        if (livingEntity != Minecraft.getInstance().cameraEntity && !Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
             return;
         }
 

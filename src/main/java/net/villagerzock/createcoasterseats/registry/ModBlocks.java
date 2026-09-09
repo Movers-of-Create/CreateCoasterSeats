@@ -17,7 +17,7 @@ public final class ModBlocks {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(Createcoasterseats.MOD_ID);
     public static final Map<DyeColor, DeferredBlock<SecurableSeatBlock>> RESTRICTOR_SEATS;
     public static final Map<DyeColor, DeferredBlock<SecurableSeatBlock>> LAPBAR_SEATS;
-    public static final DeferredBlock<SecurableSeatBlock> BLACK_SECURABLE_SEAT;
+    public static final DeferredBlock<SecurableSeatBlock> RED_RESTRICTOR_SEAT;
 
     static {
         Map<DyeColor, DeferredBlock<SecurableSeatBlock>> seats = new EnumMap<>(DyeColor.class);
@@ -67,7 +67,7 @@ public final class ModBlocks {
         }
         LAPBAR_SEATS = Collections.unmodifiableMap(lapbarSeats);
 
-        BLACK_SECURABLE_SEAT = RESTRICTOR_SEATS.get(DyeColor.BLACK);
+        RED_RESTRICTOR_SEAT = RESTRICTOR_SEATS.get(DyeColor.RED);
     }
 
     private ModBlocks() {

@@ -1,19 +1,28 @@
 package net.villagerzock.createcoasterseats.ponder;
 
 import com.simibubi.create.AllItems;
+import com.simibubi.create.content.contraptions.actors.seat.SeatBlock;
+import com.simibubi.create.content.contraptions.actors.seat.SeatEntity;
 import net.createmod.catnip.math.Pointing;
+import net.createmod.ponder.api.level.PonderLevel;
 import net.createmod.ponder.api.scene.SceneBuilder;
 import net.createmod.ponder.api.scene.SceneBuildingUtil;
 import net.createmod.ponder.api.scene.Selection;
 import net.createmod.ponder.foundation.instruction.RotateSceneInstruction;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.RemotePlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.LeverBlock;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.common.Tags;
 import net.villagerzock.createcoasterseats.block.entity.SecurableSeatBlockEntity;
 
-import java.lang.reflect.UndeclaredThrowableException;
+import java.util.List;
 
 public class SeatPonder {
     public static void sceneOne(SceneBuilder scene, SceneBuildingUtil util) {
@@ -40,7 +49,8 @@ public class SeatPonder {
         scene.overlay()
                 .showText(20)
                 .text("You can change the Activation Mode using a Wrench")
-                .pointAt(util.vector().blockSurface(new BlockPos(2,1,2), Direction.DOWN));
+                .pointAt(util.vector().blockSurface(new BlockPos(2,1,2), Direction.DOWN))
+                .placeNearTarget();
 
         BlockPos seatPos = util.grid().at(2, 1, 2);
         Selection seatSelection = util.select().position(seatPos);
@@ -56,7 +66,14 @@ public class SeatPonder {
         );
 
         scene.idle(20);
-        scene.addKeyframe();
+        scene.addLazyKeyframe();
+        scene.overlay()
+                .showText(20)
+                .text("You can change the Activation Mode using a Wrench")
+                .pointAt(util.vector().blockSurface(new BlockPos(2,1,2), Direction.DOWN))
+                .placeNearTarget();
+
+        scene.idle(20);
 
         Vec3 lowerSlot = util.vector()
                 .blockSurface(seatPos, Direction.DOWN)
@@ -118,18 +135,82 @@ public class SeatPonder {
 
         Selection basePlate = util.select().layer(0);
 
-        Selection seat = util.select().position(2,1,2);
+        BlockPos seatPos = new BlockPos(2,1,2);
+
+        Selection seat = util.select().position(seatPos);
         scene.world().showSection(basePlate.add(seat), Direction.DOWN);
 
         scene.idle(10);
 
-        Selection link = util.select().position(0,1,2);
-        Selection torch = util.select().position(1,1,2);
+        scene.overlay().showText(80)
+                .text("In Link Mode you can close the Restrictor by using a Redstone Link with the Same Signal")
+                .pointAt(util.vector().blockSurface(new BlockPos(2,1,2), Direction.DOWN))
+                .placeNearTarget();
 
-        scene.world().showSection(link.add(link), Direction.DOWN);
+        BlockPos leverBlockPos = new BlockPos(4,1,3);
+        Selection link = util.select().position(4,1,2);
+        Selection lever = util.select().position(leverBlockPos);
+
+        scene.world().showSection(link, Direction.DOWN);
 
         scene.idle(10);
 
-        scene.world().showSection(torch.add(torch), Direction.DOWN);
+        scene.world().showSection(lever, Direction.DOWN);
+
+        scene.idle(20);
+
+        scene.world().toggleRedstonePower(lever.add(link));
+        scene.effects().indicateRedstone(leverBlockPos);
+        scene.world().modifyBlockEntity(seatPos,SecurableSeatBlockEntity.class, be ->{
+            be.setLinkPowered(true);
+        });
+
+        scene.idle(40);
+
+        scene.world().toggleRedstonePower(lever.add(link));
+        scene.effects().indicateRedstone(leverBlockPos);
+        scene.world().modifyBlockEntity(seatPos,SecurableSeatBlockEntity.class, be ->{
+            be.setLinkPowered(false);
+        });
+    }
+
+    public static void sceneThree(SceneBuilder scene, SceneBuildingUtil util) {
+        scene.title("securable_seat_redstone", "Redstone Mode");
+        scene.configureBasePlate(0, 0, 5);
+
+        Selection basePlate = util.select().layer(0);
+
+        BlockPos seatPos = new BlockPos(2,1,2);
+
+        Selection seat = util.select().position(seatPos);
+        scene.world().showSection(basePlate.add(seat), Direction.DOWN);
+
+        scene.idle(10);
+
+        scene.overlay().showText(80)
+                .text("In Redstone Mode you can close the Restrictor by using a Redstone Signal going into Any Side of the Block")
+                .pointAt(util.vector().blockSurface(new BlockPos(2,1,2), Direction.DOWN))
+                .placeNearTarget();
+
+        BlockPos leverBlockPos = new BlockPos(3,1,2);
+        Selection lever = util.select().position(leverBlockPos);
+
+        scene.world().showSection(lever, Direction.DOWN);
+
+        scene.idle(20);
+
+        scene.world().toggleRedstonePower(lever);
+        scene.effects().indicateRedstone(leverBlockPos);
+        scene.world().modifyBlockEntity(seatPos,SecurableSeatBlockEntity.class, be ->{
+            be.setRedstonePowered(true);
+        });
+
+        scene.idle(40);
+
+        scene.world().toggleRedstonePower(lever);
+        scene.effects().indicateRedstone(leverBlockPos);
+        scene.world().modifyBlockEntity(seatPos,SecurableSeatBlockEntity.class, be ->{
+            be.setRedstonePowered(false);
+        });
     }
 }

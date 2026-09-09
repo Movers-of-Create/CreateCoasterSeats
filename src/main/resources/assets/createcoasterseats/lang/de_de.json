@@ -38,5 +38,12 @@
   "block.createcoasterseats.brown_lapbar_seat": "Brauner Hüftstangen Sitz",
   "block.createcoasterseats.green_lapbar_seat": "Grüner Hüftstangen Sitz",
   "block.createcoasterseats.red_lapbar_seat": "Roter Hüftstangen Sitz",
-  "block.createcoasterseats.black_lapbar_seat": "Schwarzer Hüftstangen Sitz"
+  "block.createcoasterseats.black_lapbar_seat": "Schwarzer Hüftstangen Sitz",
+  "createcoasterseats.ponder.securable_seat.header": "Sicherbarer Sitz",
+  "createcoasterseats.ponder.securable_seat.text_1": "Du kannst den Aktivierungsmodus mit einem Schraubenschlüssel ändern.",
+  "createcoasterseats.ponder.securable_seat.text_2": "Auf der Unterseite kannst du die Redstone Link Frequenz ändern, Mithilfe eines Clipboards kannst du diese auch einfach übernehmen",
+  "createcoasterseats.ponder.securable_seat_link.header": "Link Modus",
+  "createcoasterseats.ponder.securable_seat_link.text_1": "Im Link Modus kannst du den Bügel mit einem Redstone-Link schließen, der auf dasselbe Signal eingestellt ist.",
+  "createcoasterseats.ponder.securable_seat_redstone.header": "Redstone-Modus",
+  "createcoasterseats.ponder.securable_seat_redstone.text_1": "Im Redstone-Modus kannst du den Bügel schließen, indem du ein Redstone-Signal an eine beliebige Seite des Blocks anlegst."
 }

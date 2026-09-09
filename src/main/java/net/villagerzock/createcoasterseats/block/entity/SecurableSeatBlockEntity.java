@@ -22,6 +22,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.core.Direction;
+import net.neoforged.fml.ISystemReportExtender;
 import net.villagerzock.createcoasterseats.block.ISecurableSeat;
 import net.villagerzock.createcoasterseats.block.SecurableSeatBlock;
 import net.villagerzock.createcoasterseats.icons.SeatsAllIcons;
@@ -157,10 +158,12 @@ public class SecurableSeatBlockEntity extends SmartBlockEntity {
             return;
         setChanged();
 
-        if (level != null && !level.isClientSide) {
+        if (level != null) {
             if (state.getValue(SecurableSeatBlock.POWERED) != isPowered())
                 level.setBlock(worldPosition, state.setValue(SecurableSeatBlock.POWERED, isPowered()), Block.UPDATE_ALL);
-            sendData();
+            System.out.println("Updated State");
+            if (!level.isClientSide)
+                sendData();
         }
     }
 

@@ -38,5 +38,12 @@
   "block.createcoasterseats.brown_lapbar_seat": "Brown Lapbar Seat",
   "block.createcoasterseats.green_lapbar_seat": "Green Lapbar Seat",
   "block.createcoasterseats.red_lapbar_seat": "Red Lapbar Seat",
-  "block.createcoasterseats.black_lapbar_seat": "Black Lapbar Seat"
+  "block.createcoasterseats.black_lapbar_seat": "Black Lapbar Seat",
+  "createcoasterseats.ponder.securable_seat.header": "Securable Seat",
+  "createcoasterseats.ponder.securable_seat.text_1": "You can change the Activation Mode using a Wrench",
+  "createcoasterseats.ponder.securable_seat.text_2": "On the underside you can change the Redstone Link frequency, alternatively using a Clipboard you can simply copy it.",
+  "createcoasterseats.ponder.securable_seat_link.header": "Link Mode",
+  "createcoasterseats.ponder.securable_seat_link.text_1": "In Link Mode you can close the Restrictor by using a Redstone Link with the Same Signal",
+  "createcoasterseats.ponder.securable_seat_redstone.header": "Redstone Mode",
+  "createcoasterseats.ponder.securable_seat_redstone.text_1": "In Redstone Mode you can close the Restrictor by using a Redstone Signal going into Any Side of the Block"
 }
