@@ -7,6 +7,7 @@ import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.villagerzock.createcoasterseats.Createcoasterseats;
+import net.villagerzock.createcoasterseats.item.SecurableSeatItem;
 
 import java.util.Collections;
 import java.util.EnumMap;
