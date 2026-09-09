@@ -79,6 +79,7 @@ public class SecurableSeatBlockEntity extends SmartBlockEntity {
         minAngle = state.getBlock() instanceof ISecurableSeat securableSeat ? securableSeat.getMinAngle() : 0;
 
         linkPowered = state.getValue(SecurableSeatBlock.POWERED);
+        redstonePowered = state.getValue(SecurableSeatBlock.POWERED);
         hangerAngle = linkPowered ? minAngle : maxAngle;
         previousHangerAngle = hangerAngle;
 

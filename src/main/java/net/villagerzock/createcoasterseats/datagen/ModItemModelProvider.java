@@ -60,12 +60,10 @@ public class ModItemModelProvider extends ItemModelProvider {
         registerSeat(
                 "restrictor_seat",
                 "restrictor/default_restrictor",
-                0.0F,
-                0.0F,
-                0.0F,
+                0f, 20, -2,
                 Map.of(
-                        "7", "create:block/seat/top_%1$s",
-                        "22", "create:block/seat/side_%1$s"
+                        "15", "create:block/seat/top_%1$s",
+                        "30", "create:block/seat/side_%1$s"
                 )
         );
 
@@ -73,8 +71,8 @@ public class ModItemModelProvider extends ItemModelProvider {
                 "lapbar_seat",
                 "restrictor/lapbar",
                 0.0F,
-                20.0F / 16.0F,
-                -2.0F / 16.0F,
+                0.0F,
+                18.0F,
                 Map.of(
                         "7", "create:block/seat/top_%1$s",
                         "22", "create:block/seat/side_%1$s"
@@ -148,7 +146,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         );
 
         JsonObject result = seatJson.deepCopy();
-        result.addProperty("parent", "minecraft:block/block");
+        result.addProperty("parent", "createcoasterseats:block/seat_display");
 
         JsonArray resultElements = getOrCreateElements(result);
 

@@ -50,7 +50,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
                         "7", "create:block/seat/top_%1$s",
                         "22", "create:block/seat/side_%1$s"
                 ),
-                false
+                true
         );
     }
 
