@@ -175,7 +175,7 @@ public class SecurableSeatBlock extends SeatBlock implements EntityBlock, ISecur
     }
 
     @Override
-    public void updatePlayerAnimation(AbstractClientPlayer entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float partialTicks, PlayerModelBundle playerModelBundle, BlockPos pos, Level level, boolean isFirstPerson) {
+    public void updatePlayerAnimation(Player entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float partialTicks, PlayerModelBundle playerModelBundle, BlockPos pos, Level level, boolean isFirstPerson) {
         this.playerAnimationModificator.updatePlayerAnimation(entity,limbSwing,limbSwingAmount, ageInTicks, netHeadYaw, headPitch, partialTicks, playerModelBundle, pos, level, isFirstPerson);
     }
 

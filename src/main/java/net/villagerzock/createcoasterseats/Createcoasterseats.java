@@ -27,10 +27,6 @@ public final class Createcoasterseats {
                 ModConfig.Type.CLIENT,
                 CreateCoasterSeatsConfig.SPEC
         );
-        modContainer.registerExtensionPoint(
-                IConfigScreenFactory.class,
-                (mc, parent) -> new BaseConfigScreen(parent,MOD_ID)
-        );
         ModBlocks.BLOCKS.register(modEventBus);
         ModItems.ITEMS.register(modEventBus);
         ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);
