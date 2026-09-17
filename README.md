@@ -64,6 +64,6 @@ For a development client, run:
 
 ## License
 
-Create Coaster Seats is licensed under the [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.en.html).
+Create Coaster Seats is licensed under the [GNU General Public License v3.0](https://github.com/Movers-of-Create/CreateCoasterSeats?tab=GPL-3.0-1-ov-file).
 
 Create is a separate project owned by its respective authors.
