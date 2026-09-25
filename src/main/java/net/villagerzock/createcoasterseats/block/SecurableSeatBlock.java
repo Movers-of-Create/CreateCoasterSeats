@@ -4,6 +4,7 @@ import com.simibubi.create.content.contraptions.actors.seat.SeatBlock;
 import com.simibubi.create.content.redstone.link.LinkBehaviour;
 import com.simibubi.create.foundation.utility.BlockHelper;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -30,11 +31,17 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.registries.DeferredBlock;
 import net.villagerzock.createcoasterseats.block.entity.SecurableSeatBlockEntity;
 import net.villagerzock.createcoasterseats.registry.ModBlockEntities;
 import net.villagerzock.createcoasterseats.registry.ModBlocks;
 import net.villagerzock.createcoasterseats.event.SeatMountHandler;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class SecurableSeatBlock extends SeatBlock implements EntityBlock, ISecurableSeat, IPlayerAnimationModificator {
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
@@ -44,15 +51,20 @@ public class SecurableSeatBlock extends SeatBlock implements EntityBlock, ISecur
     private final int minAngle;
     private final int maxAngle;
     private final Vec3 restrictorOffset;
-    private final PartialModel restrictorModel;
+    private final AtomicReference<PartialModel> restrictorModel;
+    private final Map<DyeColor, DeferredBlock<SecurableSeatBlock>> colorSeatMap;
 
-    public SecurableSeatBlock(Properties properties, DyeColor color, IPlayerAnimationModificator playerAnimationModificator, int minAngle, int maxAngle, Vec3 restrictorOffset, ResourceLocation restrictorModel) {
+    public SecurableSeatBlock(Properties properties, DyeColor color, IPlayerAnimationModificator playerAnimationModificator, int minAngle, int maxAngle, Vec3 restrictorOffset, ResourceLocation restrictorModel, Map<DyeColor, DeferredBlock<SecurableSeatBlock>> colorSeatMap) {
         super(properties, color);
         this.playerAnimationModificator = playerAnimationModificator;
         this.minAngle = minAngle;
         this.maxAngle = maxAngle;
         this.restrictorOffset = restrictorOffset;
-        this.restrictorModel = PartialModel.of(restrictorModel.withPrefix("block/"));
+        this.restrictorModel = new AtomicReference<>();
+        this.colorSeatMap = colorSeatMap;
+        if (FMLEnvironment.dist == Dist.CLIENT){
+            this.restrictorModel.set(PartialModel.of(restrictorModel.withPrefix("block/")));
+        }
         registerDefaultState(defaultBlockState()
                 .setValue(POWERED, false)
                 .setValue(FACING, net.minecraft.core.Direction.NORTH));
@@ -96,7 +108,7 @@ public class SecurableSeatBlock extends SeatBlock implements EntityBlock, ISecur
             if (!level.isClientSide) {
                 BlockState recolored = BlockHelper.copyProperties(
                     state,
-                    ModBlocks.RESTRICTOR_SEATS.get(newColor).get().defaultBlockState()
+                    colorSeatMap.get(newColor).get().defaultBlockState()
                 );
                 level.setBlockAndUpdate(pos, recolored);
             }
@@ -170,7 +182,7 @@ public class SecurableSeatBlock extends SeatBlock implements EntityBlock, ISecur
     }
 
     @Override
-    public PartialModel getRestrictorModel() {
+    public AtomicReference<PartialModel> getRestrictorModel() {
         return restrictorModel;
     }
 

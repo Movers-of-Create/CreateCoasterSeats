@@ -40,7 +40,7 @@ public final class ModBlocks {
                         playerModelBundle.leftLeg().visible = false;
                         playerModelBundle.rightLeg().visible = false;
                     }
-                }), 0, 65, new Vec3(0, 20 / 16D, -2 / 16D), ResourceLocation.fromNamespaceAndPath(Createcoasterseats.MOD_ID, "restrictor/default_restrictor"))
+                }), 0, 65, new Vec3(0, 20 / 16D, -2 / 16D), ResourceLocation.fromNamespaceAndPath(Createcoasterseats.MOD_ID, "restrictor/default_restrictor"), seats)
             ));
         }
         RESTRICTOR_SEATS = Collections.unmodifiableMap(seats);
@@ -62,7 +62,7 @@ public final class ModBlocks {
                             playerModelBundle.leftLeg().visible = false;
                             playerModelBundle.rightLeg().visible = false;
                         }
-                    }), 10, -20, new Vec3(0, 0, 18 / 16D), ResourceLocation.fromNamespaceAndPath(Createcoasterseats.MOD_ID, "restrictor/lapbar"))
+                    }), 10, -20, new Vec3(0, 0, 18 / 16D), ResourceLocation.fromNamespaceAndPath(Createcoasterseats.MOD_ID, "restrictor/lapbar"), lapbarSeats)
             ));
         }
         LAPBAR_SEATS = Collections.unmodifiableMap(lapbarSeats);
