@@ -42,7 +42,7 @@ public class SecurableSeatBlockEntity extends SmartBlockEntity {
 
     public PartialModel getRestrictorModel() {
         if (getBlockState().getBlock() instanceof ISecurableSeat securableSeat) {
-            return securableSeat.getRestrictorModel();
+            return securableSeat.getRestrictorModel().get();
         }
         return null;
     }
