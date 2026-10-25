@@ -1,43 +1,57 @@
 package net.villagerzock.createcoasterseats.registry;
 
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.item.*;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.villagerzock.createcoasterseats.Createcoasterseats;
-import net.villagerzock.createcoasterseats.item.SecurableSeatItem;
+import net.villagerzock.createcoasterseats.item.RestrictorItem;
+import net.villagerzock.createcoasterseats.item.SecurableSeatBlockItem;
+import net.villagerzock.createcoasterseats.block.SeatType;
+import org.openjdk.nashorn.internal.runtime.JSErrorType;
 
-import java.util.Collections;
 import java.util.EnumMap;
-import java.util.Map;
 
 public final class ModItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Createcoasterseats.MOD_ID);
-    public static final Map<DyeColor, DeferredItem<BlockItem>> SECURABLE_SEATS;
-    public static final Map<DyeColor, DeferredItem<BlockItem>> LAPBAR_SEATS;
-    public static final DeferredItem<BlockItem> BLACK_SECURABLE_SEAT;
+
+    public static final DeferredItem<RestrictorItem> BASIC_RESTRICTOR = ITEMS.register(
+            "basic_restrictor", () -> new RestrictorItem(new Item.Properties(), ModRestrictors.BASIC));
+    public static final DeferredItem<RestrictorItem> LAPBAR = ITEMS.register(
+            "lapbar", () -> new RestrictorItem(new Item.Properties(), ModRestrictors.LAPBAR));
+    public static final DeferredItem<Item> PLASTIC_SHEET = ITEMS.register(
+            "plastic_sheet", () -> new Item(new Item.Properties())
+    );
+    public static DeferredItem<Item> POLYMER_RESIN = ITEMS.register(
+            "polymer_resin", () -> new Item(new Item.Properties())
+    );
+    public static DeferredItem<Item> ORGANIC_MASS = ITEMS.register(
+            "organic_mass", () -> new Item(new Item.Properties())
+    );
+    public static DeferredItem<Item> SCULK_POWDER = ITEMS.register(
+            "sculk_powder", () -> new Item(new Item.Properties())
+    );
+    public static final DeferredItem<Item> MOLTEN_PLASTIC_BUCKET = ITEMS.register(
+            "molten_plastic_bucket",
+            () -> new BucketItem(
+                    ModFluids.MOLTEN_PLASTIC.get(),
+                    new Item.Properties()
+                            .stacksTo(1)
+                            .craftRemainder(Items.BUCKET)
+            )
+    );
+
+    public static final EnumMap<DyeColor, DeferredItem<BlockItem>> COLORED_BLOCKS = new EnumMap<>(DyeColor.class);
+    public static final EnumMap<DyeColor, DeferredItem<BlockItem>> WOOL_SEATS = new EnumMap<>(DyeColor.class);
 
     static {
-        Map<DyeColor, DeferredItem<BlockItem>> seats = new EnumMap<>(DyeColor.class);
-        ModBlocks.RESTRICTOR_SEATS.forEach((color, block) -> {
-            ITEMS.addAlias(ResourceLocation.fromNamespaceAndPath(Createcoasterseats.MOD_ID,color.getName()+"_securable_seat"), ResourceLocation.fromNamespaceAndPath(Createcoasterseats.MOD_ID, color.getName() + "_restrictor_seat"));
-            seats.put(color, ITEMS.register(
-                    color.getName() + "_restrictor_seat",
-                    () -> new BlockItem(block.get(), new Item.Properties())
-            ));
-        });
-        Map<DyeColor, DeferredItem<BlockItem>> lapbarSeats = new EnumMap<>(DyeColor.class);
-        ModBlocks.LAPBAR_SEATS.forEach((color, block) -> lapbarSeats.put(color, ITEMS.register(
-                color.getName() + "_lapbar_seat",
-                () -> new BlockItem(block.get(), new Item.Properties())
-        )));
-        SECURABLE_SEATS = Collections.unmodifiableMap(seats);
-        LAPBAR_SEATS = Collections.unmodifiableMap(lapbarSeats);
-        BLACK_SECURABLE_SEAT = SECURABLE_SEATS.get(DyeColor.BLACK);
+        for (DyeColor color : DyeColor.values()){
+            COLORED_BLOCKS.put(color, ITEMS.register(color.getName() + "_plastic_seat",()->(new SecurableSeatBlockItem(ModBlocks.SECURABLE_SEAT.get(), new Item.Properties(), color))));
+            WOOL_SEATS.put(color, ITEMS.register(color.getName() + "_wool_seat",
+                    () -> new SecurableSeatBlockItem(ModBlocks.SECURABLE_SEAT.get(), new Item.Properties(), color, SeatType.WOOL)));
+        }
     }
 
     private ModItems() {
+
     }
 }

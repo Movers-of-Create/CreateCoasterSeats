@@ -1,0 +1,12 @@
+{
+    "parent":  "createcoasterseats:block/base_seat",
+    "textures":  {
+                     "0":  "createcoasterseats:block/secured_seat/sidelow_off",
+                     "2":  "createcoasterseats:block/secured_seat/casing_off",
+                     "3":  "create:block/andesite_casing",
+                     "15":  "createcoasterseats:block/secured_seat/top_yellow_plastic",
+                     "30":  "createcoasterseats:block/secured_seat/side_yellow_plastic",
+                     "41":  "createcoasterseats:block/secured_seat/link",
+                     "particle":  "createcoasterseats:block/secured_seat/top_yellow_plastic"
+                 }
+}

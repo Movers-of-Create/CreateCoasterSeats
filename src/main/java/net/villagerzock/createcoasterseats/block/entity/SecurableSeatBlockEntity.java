@@ -14,8 +14,13 @@ import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.createmod.catnip.lang.Lang;
 import net.createmod.catnip.math.AngleHelper;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -24,9 +29,12 @@ import net.createmod.catnip.math.VecHelper;
 import net.minecraft.core.Direction;
 import net.neoforged.fml.ISystemReportExtender;
 import net.villagerzock.createcoasterseats.block.ISecurableSeat;
+import net.villagerzock.createcoasterseats.block.SeatStyle;
 import net.villagerzock.createcoasterseats.block.SecurableSeatBlock;
 import net.villagerzock.createcoasterseats.icons.SeatsAllIcons;
 import net.villagerzock.createcoasterseats.registry.ModBlockEntities;
+import net.villagerzock.createcoasterseats.registry.ModRegistries;
+import net.villagerzock.createcoasterseats.restrictions.RestrictorType;
 
 import java.util.List;
 
@@ -35,14 +43,48 @@ public class SecurableSeatBlockEntity extends SmartBlockEntity {
     private boolean redstonePowered;
     private float previousHangerAngle;
     private float hangerAngle;
+    private RestrictorType restrictorType;
+    private RestrictorType animatedRestrictorType;
+    private boolean hangerAngleInitialized;
+
+    @Override
+    protected void write(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
+        super.write(tag, registries, clientPacket);
+        ResourceLocation typeId = restrictorType == null ? null : ModRegistries.RESTRICTOR_TYPES.getKey(restrictorType);
+        if (typeId != null) {
+            tag.putString("RestrictorType", typeId.toString());
+        } else {
+            tag.remove("RestrictorType");
+        }
+    }
+
+    @Override
+    protected void read(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
+        super.read(tag, registries, clientPacket);
+        ResourceLocation typeId = ResourceLocation.tryParse(tag.getString("RestrictorType"));
+        restrictorType = typeId == null ? null : ModRegistries.RESTRICTOR_TYPES.get(typeId);
+        updateRestrictorAngles();
+    }
+
+    public boolean hasRestrictor() {
+        return restrictorType != null;
+    }
+
+    public ItemStack getRestrictorItem() {
+        return restrictorType == null ? ItemStack.EMPTY : new ItemStack(restrictorType.getItem());
+    }
+
+    public RestrictorType getRestrictorType() {
+        return restrictorType;
+    }
 
     public ActivationMode getActivationMode() {
         return activationMode.get();
     }
 
     public PartialModel getRestrictorModel() {
-        if (getBlockState().getBlock() instanceof ISecurableSeat securableSeat) {
-            return securableSeat.getRestrictorModel().get();
+        if (restrictorType != null) {
+            return restrictorType.getModel();
         }
         return null;
     }
@@ -76,8 +118,8 @@ public class SecurableSeatBlockEntity extends SmartBlockEntity {
     public SecurableSeatBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.SECURABLE_SEAT.get(), pos, state);
 
-        maxAngle = state.getBlock() instanceof ISecurableSeat securableSeat ? securableSeat.getMaxAngle() : 0;
-        minAngle = state.getBlock() instanceof ISecurableSeat securableSeat ? securableSeat.getMinAngle() : 0;
+        maxAngle = 0;
+        minAngle = 0;
 
         linkPowered = state.getValue(SecurableSeatBlock.POWERED);
         redstonePowered = state.getValue(SecurableSeatBlock.POWERED);
@@ -112,8 +154,26 @@ public class SecurableSeatBlockEntity extends SmartBlockEntity {
         return redstonePowered;
     }
 
-    public final int maxAngle;
-    public final int minAngle;
+    public float maxAngle;
+    public float minAngle;
+
+    private void updateRestrictorAngles() {
+        if (restrictorType != null) {
+            minAngle = restrictorType.getClosedAngle();
+            maxAngle = restrictorType.getOpenAngle();
+        } else {
+            minAngle = 0;
+            maxAngle = 0;
+        }
+        // Keep an ongoing animation when an ordinary data packet is received.
+        // Initialize both interpolation endpoints only on load or a restrictor change.
+        if (!hangerAngleInitialized || animatedRestrictorType != restrictorType) {
+            hangerAngle = getBlockState().getValue(SecurableSeatBlock.POWERED) ? minAngle : maxAngle;
+            previousHangerAngle = hangerAngle;
+            animatedRestrictorType = restrictorType;
+            hangerAngleInitialized = true;
+        }
+    }
 
     @Override
     public void tick() {
@@ -152,6 +212,23 @@ public class SecurableSeatBlockEntity extends SmartBlockEntity {
         };
     }
 
+    public void updateRestrictor(RestrictorType type){
+        if (this.getLevel().isClientSide()){
+            return;
+        }
+
+        this.restrictorType = type;
+        updateRestrictorAngles();
+        BlockPos pos = getBlockPos();
+        Level lvl = getLevel();
+        BlockState state = getBlockState();
+        state = state.setValue(SecurableSeatBlock.SEAT_STYLE, type == null ? SeatStyle.BASE : type.getStyle());
+        assert lvl != null;
+        lvl.setBlockAndUpdate(pos,state);
+        setChanged();
+        sendData();
+    }
+
     public void updateState(){
         BlockState state = getBlockState();
         if (state.getValue(SecurableSeatBlock.POWERED) == isPowered())
@@ -161,14 +238,13 @@ public class SecurableSeatBlockEntity extends SmartBlockEntity {
         if (level != null) {
             if (state.getValue(SecurableSeatBlock.POWERED) != isPowered())
                 level.setBlock(worldPosition, state.setValue(SecurableSeatBlock.POWERED, isPowered()), Block.UPDATE_ALL);
-            System.out.println("Updated State");
             if (!level.isClientSide)
                 sendData();
         }
     }
 
     public boolean isHangerDown(float partialTicks) {
-        return Math.abs(getHangerAngle(partialTicks) - minAngle) < 0.1;
+        return hasRestrictor() && Math.abs(getHangerAngle(partialTicks) - minAngle) < 0.1;
     }
 
     private static final class FrequencySlot extends ValueBoxTransform.Dual {
@@ -202,8 +278,8 @@ public class SecurableSeatBlockEntity extends SmartBlockEntity {
     }
 
     public Vec3 getRestrictorOffset(){
-        if (getBlockState().getBlock() instanceof ISecurableSeat securableSeat){
-            return securableSeat.getRestrictorOffset();
+        if (restrictorType != null){
+            return restrictorType.getOffset();
         }
         return Vec3.ZERO;
     }

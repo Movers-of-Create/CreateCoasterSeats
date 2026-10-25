@@ -1,0 +1,12 @@
+{
+  "sources": [
+    {
+      "type": "single",
+      "resource": "createcoasterseats:fluid/molten_plastic_still"
+    },
+    {
+      "type": "single",
+      "resource": "createcoasterseats:fluid/molten_plastic_flow"
+    }
+  ]
+}

@@ -11,6 +11,12 @@
       "type": "optional",
       "modrinth": "W1ZUfWdr",
       "version": "*"
+    },
+    {
+      "name": "create-enchantment-industries",
+      "type": "optional",
+      "modrinth": "JWGBpFUP",
+      "version": "*"
     }
   ]
 }

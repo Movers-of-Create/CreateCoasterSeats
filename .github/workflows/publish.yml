@@ -1,15 +1,20 @@
-name: Build and Publish
+name: Publish release to Modrinth
 
 on:
   push:
     branches:
-      - master
+      - release
+
+concurrency:
+  group: modrinth-release
+  cancel-in-progress: false
 
 permissions:
   contents: write
 
 jobs:
   publish:
+    if: github.ref == 'refs/heads/release'
     environment: "MODRINTH_TOKEN"
     runs-on: ubuntu-latest
 

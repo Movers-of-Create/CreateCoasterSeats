@@ -51,7 +51,7 @@ public class PlayerModelMixin<T extends LivingEntity> extends HumanoidModel<T> {
         float partialTicks = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(true);
         if (entity.getVehicle() instanceof SeatEntity seat && seat.level().getBlockState(seat.blockPosition()).getBlock() instanceof SecurableSeatBlock securableSeatBlock && seat.level().getBlockEntity(seat.blockPosition()) instanceof SecurableSeatBlockEntity securableSeatBlockEntity && securableSeatBlockEntity.isHangerDown(partialTicks)){
             boolean firstPerson = entity == Minecraft.getInstance().cameraEntity && Minecraft.getInstance().options.getCameraType().isFirstPerson();
-            securableSeatBlock.updatePlayerAnimation(player, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, partialTicks, new PlayerModelBundle(this.head, this.body, this.rightArm, this.leftArm, this.rightLeg, this.leftLeg), seat.blockPosition(), seat.level(), firstPerson);
+            securableSeatBlockEntity.getRestrictorType().getPlayerAnimationModificator().updatePlayerAnimation(player, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, partialTicks, new PlayerModelBundle(this.head, this.body, this.rightArm, this.leftArm, this.rightLeg, this.leftLeg), seat.blockPosition(), seat.level(), firstPerson);
             this.jacket.visible = this.body.visible;
             this.leftPants.visible = this.leftLeg.visible;
             this.rightPants.visible = this.rightLeg.visible;

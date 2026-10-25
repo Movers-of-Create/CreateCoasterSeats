@@ -21,6 +21,10 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.Tags;
 import net.villagerzock.createcoasterseats.block.entity.SecurableSeatBlockEntity;
+import net.villagerzock.createcoasterseats.block.SeatStyle;
+import net.villagerzock.createcoasterseats.block.SecurableSeatBlock;
+import net.villagerzock.createcoasterseats.registry.ModItems;
+import net.villagerzock.createcoasterseats.registry.ModRestrictors;
 
 import java.util.List;
 
@@ -30,6 +34,13 @@ public class SeatPonder {
         scene.configureBasePlate(0, 0, 5);
         scene.removeShadow();
 
+        BlockPos seatPos = util.grid().at(2, 1, 2);
+        Selection seatSelection = util.select().position(seatPos);
+        scene.world().modifyBlock(seatPos,
+                state -> state.setValue(SecurableSeatBlock.SEAT_STYLE, SeatStyle.BASE), false);
+        scene.world().modifyBlockEntityNBT(seatSelection, SecurableSeatBlockEntity.class,
+                nbt -> nbt.remove("RestrictorType"));
+
         Selection basePlate = util.select().layer(0);
         scene.world().showSection(
                 util.select().everywhere(),
@@ -37,6 +48,18 @@ public class SeatPonder {
         );
 
         scene.idle(20);
+
+        scene.overlay().showText(70)
+                .text("Right-click the seat with a Basic Restrictor to attach it.")
+                .pointAt(util.vector().centerOf(seatPos))
+                .placeNearTarget();
+        scene.overlay().showControls(util.vector().topOf(seatPos), Pointing.DOWN, 50)
+                .rightClick()
+                .withItem(new ItemStack(ModItems.BASIC_RESTRICTOR.get()));
+        scene.idle(25);
+        addBasicRestrictor(scene, util, seatPos);
+        scene.idle(55);
+        scene.addKeyframe();
 
         scene.overlay()
                 .showControls(
@@ -52,9 +75,6 @@ public class SeatPonder {
                 .pointAt(util.vector().blockSurface(new BlockPos(2,1,2), Direction.DOWN))
                 .placeNearTarget();
 
-        BlockPos seatPos = util.grid().at(2, 1, 2);
-        Selection seatSelection = util.select().position(seatPos);
-
         ItemStack iron = new ItemStack(Items.IRON_INGOT);
         ItemStack sapling = new ItemStack(Items.OAK_SAPLING);
 
@@ -69,7 +89,7 @@ public class SeatPonder {
         scene.addLazyKeyframe();
         scene.overlay()
                 .showText(20)
-                .text("You can change the Activation Mode using a Wrench")
+                .text("On the underside you can change the Redstone Link frequency, alternatively using a Clipboard you can simply copy it.")
                 .pointAt(util.vector().blockSurface(new BlockPos(2,1,2), Direction.DOWN))
                 .placeNearTarget();
 
@@ -138,6 +158,7 @@ public class SeatPonder {
         BlockPos seatPos = new BlockPos(2,1,2);
 
         Selection seat = util.select().position(seatPos);
+        addBasicRestrictor(scene, util, seatPos);
         scene.world().showSection(basePlate.add(seat), Direction.DOWN);
 
         scene.idle(10);
@@ -183,6 +204,7 @@ public class SeatPonder {
         BlockPos seatPos = new BlockPos(2,1,2);
 
         Selection seat = util.select().position(seatPos);
+        addBasicRestrictor(scene, util, seatPos);
         scene.world().showSection(basePlate.add(seat), Direction.DOWN);
 
         scene.idle(10);
@@ -212,5 +234,12 @@ public class SeatPonder {
         scene.world().modifyBlockEntity(seatPos,SecurableSeatBlockEntity.class, be ->{
             be.setRedstonePowered(false);
         });
+    }
+    private static void addBasicRestrictor(SceneBuilder scene, SceneBuildingUtil util, BlockPos seatPos) {
+        // Ponder runs client-side, so apply the serialized type instead of updateRestrictor().
+        scene.world().modifyBlock(seatPos,
+                state -> state.setValue(SecurableSeatBlock.SEAT_STYLE, SeatStyle.BACK_RESTRICTOR), false);
+        scene.world().modifyBlockEntityNBT(util.select().position(seatPos), SecurableSeatBlockEntity.class,
+                nbt -> nbt.putString("RestrictorType", ModRestrictors.BASIC.getId().toString()));
     }
 }

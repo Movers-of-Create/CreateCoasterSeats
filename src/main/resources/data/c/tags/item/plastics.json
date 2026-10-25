@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "createcoasterseats:plastic_sheet",
+    {
+      "id": "#c:ingots/plastic",
+      "required": false
+    }
+  ]
+}

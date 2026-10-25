@@ -8,6 +8,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.villagerzock.createcoasterseats.Createcoasterseats;
 import net.villagerzock.createcoasterseats.block.SecurableSeatBlock;
+import net.villagerzock.createcoasterseats.item.SecurableSeatBlockItem;
 import net.villagerzock.createcoasterseats.registry.ModBlocks;
 
 public class PonderScenes implements PonderPlugin {
@@ -20,7 +21,7 @@ public class PonderScenes implements PonderPlugin {
     @Override
     public void registerTags(PonderTagRegistrationHelper<ResourceLocation> helper) {
         helper.addToTag(AllCreatePonderTags.REDSTONE)
-                .add(ModBlocks.RED_RESTRICTOR_SEAT.getId());
+                .add(ModBlocks.SECURABLE_SEAT.getId());
     }
 
     @Override
@@ -28,9 +29,9 @@ public class PonderScenes implements PonderPlugin {
         PonderPlugin.super.registerScenes(helper);
 
 
-        ResourceLocation[] blocks = BuiltInRegistries.BLOCK.stream()
-                .filter(block -> block instanceof SecurableSeatBlock)
-                .map(BuiltInRegistries.BLOCK::getKey)
+        ResourceLocation[] blocks = BuiltInRegistries.ITEM.stream()
+                .filter(block -> block instanceof SecurableSeatBlockItem)
+                .map(BuiltInRegistries.ITEM::getKey)
                 .toArray(ResourceLocation[]::new);
 
         helper.forComponents(blocks)

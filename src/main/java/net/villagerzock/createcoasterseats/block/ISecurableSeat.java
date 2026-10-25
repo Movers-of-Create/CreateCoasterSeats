@@ -11,8 +11,4 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public interface ISecurableSeat {
     boolean isSecured(BlockState state, BlockPos pos, Level level);
-    int getMaxAngle();
-    int getMinAngle();
-    Vec3 getRestrictorOffset();
-    AtomicReference<PartialModel> getRestrictorModel();
 }

@@ -35,14 +35,16 @@ public final class SecurableSeatRenderer extends SmartBlockEntityRenderer<Secura
             default -> 0;
         };
 
-        CachedBuffers.partial(blockEntity.getRestrictorModel(), blockEntity.getBlockState())
-            .center()
-            .rotateYDegrees(horizontalRotation)
-            .uncenter()
-            .translate(blockEntity.getRestrictorOffset())
-            .rotateXDegrees(-blockEntity.getHangerAngle(partialTicks))
-            .light(light)
-            .renderInto(poseStack, buffer.getBuffer(RenderType.cutoutMipped()));
+        if (blockEntity.getRestrictorModel() != null){
+            CachedBuffers.partial(blockEntity.getRestrictorModel(), blockEntity.getBlockState())
+                    .center()
+                    .rotateYDegrees(horizontalRotation)
+                    .uncenter()
+                    .translate(blockEntity.getRestrictorOffset())
+                    .rotateXDegrees(-blockEntity.getHangerAngle(partialTicks))
+                    .light(light)
+                    .renderInto(poseStack, buffer.getBuffer(RenderType.cutoutMipped()));
+        }
     }
 
     @Override
